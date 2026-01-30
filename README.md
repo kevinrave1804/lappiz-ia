@@ -1,59 +1,244 @@
-# LappizChatWidget
+# 🚀 Lappiz Chat Widget
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Widget de chat conversacional desarrollado como Web Component para integrarse fácilmente en cualquier sitio web.
 
-## Development server
+## 📋 Características
 
-To start a local development server, run:
+- ✅ **Web Component estándar** - Compatible con cualquier framework o sitio HTML
+- ✅ **Self-contained** - No requiere dependencias externas
+- ✅ **Shadow DOM** - Estilos completamente aislados
+- ✅ **Singleton Pattern** - Una única instancia global del servicio
+- ✅ **TypeScript** - Código tipado y seguro
+- ✅ **Responsive** - Adaptado para móviles y desktop
+- ✅ **CDN Ready** - Listo para distribución vía jsDelivr
 
-```bash
-ng serve
+## 🎯 Uso Rápido
+
+### 1. Incluir el script desde CDN (GitHub + jsDelivr)
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/tu-usuario/lappiz-chat-widget@1.0.0/dist/main.js"></script>
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 2. Agregar el elemento HTML
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```html
+<lappiz-chat agent-key="tu-agent-key-aqui" app-name="client_atention"> </lappiz-chat>
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 3. ¡Listo! 🎉
+
+El widget aparecerá como un botón flotante en la esquina inferior derecha.
+
+## 🔧 Atributos del Widget
+
+| Atributo    | Tipo   | Requerido | Descripción                        | Default           |
+| ----------- | ------ | --------- | ---------------------------------- | ----------------- |
+| `agent-key` | string | ✅ Sí     | Clave de autenticación del agente  | -                 |
+| `app-name`  | string | ❌ No     | Nombre de la aplicación del agente | `client_atention` |
+
+> **Nota:** La URL de la API (`https://api.lappiz.com`) está configurada internamente en el widget.
+
+## 🏗️ Desarrollo Local
+
+### Prerrequisitos
+
+- Node.js >= 18
+- npm >= 9
+
+### Instalación
 
 ```bash
-ng generate --help
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/lappiz-chat-widget.git
+cd lappiz-chat-widget
+
+# Instalar dependencias
+npm install
 ```
 
-## Building
-
-To build the project run:
+### Comandos disponibles
 
 ```bash
-ng build
+# Iniciar servidor de desarrollo
+npm start
+# El widget estará disponible en http://localhost:4200
+
+# Compilar para producción
+npm run build:widget
+# Output en /dist
+
+# Ejecutar tests
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Probar el widget localmente
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+1. Ejecuta el servidor de desarrollo:
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+2. Abre `demo.html` en tu navegador
 
-For end-to-end (e2e) testing, run:
+3. El widget se conectará a la URL de API configurada
+
+## 📦 Build para Producción
 
 ```bash
-ng e2e
+npm run build:widget
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Esto generará:
 
-## Additional Resources
+- `dist/main.js` - Bundle único optimizado, minificado y con AOT
+- Sin source maps
+- Sin output hashing (para URLs consistentes)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🌐 Publicación en CDN (GitHub + jsDelivr)
+
+### 1. Preparar el build
+
+```bash
+npm run build:widget
+```
+
+### 2. Commit y Push
+
+```bash
+git add dist/
+git commit -m "Release v1.0.0"
+git tag v1.0.0
+git push origin main --tags
+```
+
+### 3. jsDelivr automáticamente servirá el archivo
+
+```
+https://cdn.jsdelivr.net/gh/tu-usuario/lappiz-chat-widget@1.0.0/dist/main.js
+```
+
+### 4. Para nuevas versiones
+
+```bash
+# Actualizar version en package.json
+npm version patch  # o minor, o major
+
+# Build y push
+npm run build:widget
+git add .
+git commit -m "Release v1.0.1"
+git tag v1.0.1
+git push origin main --tags
+```
+
+## 🎨 Personalización
+
+El widget actualmente soporta personalización limitada. Los colores principales están definidos en el gradiente:
+
+```css
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+```
+
+Para modificar los colores, edita los componentes en `src/app/components/`
+
+## 📡 Integración con API
+
+### Endpoints utilizados
+
+#### 1. Crear Sesión
+
+```
+POST /apps/{app_name}/users/{user_id}/sessions?agent-key={agent_key}
+```
+
+El widget genera automáticamente un `user_id` único (UUID v4) cada vez que se carga la página.
+
+#### 2. Enviar Mensaje
+
+```
+POST /run?agent-key={agent_key}
+```
+
+**Body:**
+
+```json
+{
+  "appName": "client_atention",
+  "userId": "user-abc123...",
+  "sessionId": "session-xyz789...",
+  "newMessage": {
+    "role": "user",
+    "parts": [{ "text": "Hola, necesito ayuda" }]
+  }
+}
+```
+
+## 🏛️ Arquitectura
+
+### Estructura del Proyecto
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── lappiz-chat.component.ts       # Web Component principal
+│   │   ├── chat-bubble.component.ts       # Botón flotante
+│   │   ├── chat-header.component.ts       # Header del chat
+│   │   ├── chat-messages.component.ts     # Lista de mensajes
+│   │   └── chat-input.component.ts        # Input de texto
+│   ├── services/
+│   │   └── agent.service.ts               # Singleton - API calls
+│   └── models/
+│       └── interfaces.ts                  # TypeScript interfaces
+├── main.ts                                # Entry point + Custom Element registration
+└── styles.scss                            # Estilos globales
+```
+
+### Patrón Singleton
+
+El `AgentService` implementa el patrón Singleton para asegurar:
+
+- Una única instancia global
+- Gestión centralizada de la sesión
+- Estado compartido entre todos los componentes
+
+```typescript
+const agentService = AgentService.getInstance();
+```
+
+### Shadow DOM
+
+El widget utiliza Shadow DOM para:
+
+- Encapsulación completa de estilos
+- Sin conflictos con CSS del sitio host
+- Aislamiento total del widget
+
+## 🐛 Debugging
+
+### Consola del navegador
+
+El widget emite logs útiles en la consola:
+
+```
+✅ Lappiz Chat Widget registrado exitosamente
+✅ AgentService inicializado correctamente
+```
+
+### Errores comunes
+
+**"Configuración incompleta"**
+
+- Verifica que `api-url` y `agent-key` estén configurados
+
+**"Error al conectar con el agente"**
+
+- Verifica que la API esté accesible
+- Revisa la consola del navegador para más detalles
+- Verifica que el `agent-key` sea válido
+
+## 📄 Licencia
+
+Este proyecto es privado y propiedad de Lappiz.
