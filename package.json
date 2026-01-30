@@ -6,6 +6,8 @@
     "start": "ng serve",
     "build": "ng build --configuration production",
     "build:widget": "ng build --configuration production",
+    "build:prod": "ng build --configuration production",
+    "prepare-release": "npm run build:prod && node prepare-release.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

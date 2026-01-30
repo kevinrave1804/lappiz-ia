@@ -114,36 +114,38 @@ export class LappizChatComponent implements OnInit {
       return;
     }
 
-    // Deshabilitar input mientras se procesa
+    // Crear el mensaje del usuario inmediatamente
+    const userMessage: Message = {
+      role: 'user',
+      text: messageText,
+      timestamp: Date.now(),
+    };
+
+    // Agregar el mensaje del usuario al array para mostrarlo de inmediato
+    this.messages = [...this.messages, userMessage];
+    this.cdr.detectChanges();
+
+    // Deshabilitar input y activar indicador de escritura
     this.isTyping = true;
     if (this.chatInputComponent) {
       this.chatInputComponent.setDisabled(true);
     }
 
     try {
-      // Obtener mensajes antes de enviar
-      console.log('Mensajes antes de enviar:', this.agentService.getMessages());
+      // Enviar mensaje al agente y esperar respuesta
+      const agentMessage = await this.agentService.sendMessage(messageText);
 
-      // Enviar mensaje al agente
-      const response = await this.agentService.sendMessage(messageText);
-      console.log('Respuesta recibida:', response);
-
-      // Actualizar mensajes con la respuesta del agente
-      this.messages = this.agentService.getMessages();
-      console.log('Mensajes actualizados en componente:', this.messages);
-
-      // Forzar detección de cambios
+      // Agregar la respuesta del agente
+      this.messages = [...this.messages, agentMessage];
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
       this.showError('Error al enviar mensaje. Intenta de nuevo.');
     } finally {
-      console.log('Finalizando, isTyping = false');
       this.isTyping = false;
       if (this.chatInputComponent) {
         this.chatInputComponent.setDisabled(false);
       }
-      // Forzar detección de cambios también al finalizar
       this.cdr.detectChanges();
     }
   }

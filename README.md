@@ -87,50 +87,79 @@ npm start
 ## 📦 Build para Producción
 
 ```bash
-npm run build:widget
+npm run build:prod
 ```
 
-Esto generará:
+Esto generará en `dist/browser/`:
 
-- `dist/main.js` - Bundle único optimizado, minificado y con AOT
+- `main.js` - Bundle único optimizado
+- `polyfills.js` - Polyfills necesarios
+- `styles.css` - Estilos compilados
 - Sin source maps
-- Sin output hashing (para URLs consistentes)
+- Sin output hashing (para URLs consistentes en CDN)
 
 ## 🌐 Publicación en CDN (GitHub + jsDelivr)
 
-### 1. Preparar el build
+### Preparar y publicar una nueva versión
 
 ```bash
-npm run build:widget
-```
+# 1. Preparar el release (build + mostrar instrucciones)
+npm run prepare-release
 
-### 2. Commit y Push
-
-```bash
-git add dist/
+# 2. Seguir las instrucciones mostradas:
+git add .
 git commit -m "Release v1.0.0"
 git tag v1.0.0
 git push origin main --tags
 ```
 
-### 3. jsDelivr automáticamente servirá el archivo
+### URLs de jsDelivr (disponibles ~5 min después del push)
+
+**Última versión (auto-actualizable):**
 
 ```
-https://cdn.jsdelivr.net/gh/tu-usuario/lappiz-chat-widget@1.0.0/dist/main.js
+https://cdn.jsdelivr.net/gh/TU-USUARIO/lappiz-chat-widget@latest/dist/browser/main.js
 ```
 
-### 4. Para nuevas versiones
+**Versión específica (recomendado para producción):**
+
+```
+https://cdn.jsdelivr.net/gh/TU-USUARIO/lappiz-chat-widget@v1.0.0/dist/browser/main.js
+```
+
+### Ejemplo de uso desde CDN
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mi Sitio Web</title>
+  </head>
+  <body>
+    <h1>Mi Página</h1>
+
+    <!-- Widget de Lappiz -->
+    <lappiz-chat agent-key="6D23265D-11FD-4C11-972E-380E698D2912" color="#FF6B6B"> </lappiz-chat>
+
+    <!-- Cargar desde jsDelivr CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/gh/TU-USUARIO/lappiz-chat-widget@latest/dist/browser/main.js"
+      type="module"
+    ></script>
+  </body>
+</html>
+```
+
+### Para nuevas versiones
 
 ```bash
-# Actualizar version en package.json
+# Actualizar versión en package.json (1.0.0 → 1.0.1)
 npm version patch  # o minor, o major
 
-# Build y push
-npm run build:widget
-git add .
-git commit -m "Release v1.0.1"
-git tag v1.0.1
-git push origin main --tags
+# Preparar release
+npm run prepare-release
+
+# Seguir instrucciones para git add, commit, tag y push
 ```
 
 ## 🎨 Personalización

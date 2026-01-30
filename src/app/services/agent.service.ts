@@ -107,13 +107,6 @@ export class AgentService {
       throw new Error('AgentService no está inicializado correctamente');
     }
 
-    const userMessage: Message = {
-      role: 'user',
-      text: messageText,
-      timestamp: Date.now(),
-    };
-    this.messages.push(userMessage);
-
     const requestBody: RunAgentRequest = {
       appName: this.config.appName,
       userId: this.userId,
@@ -143,11 +136,9 @@ export class AgentService {
       }
 
       const agentResponses: AgentResponse[] = await response.json();
-      console.log('Respuesta del API:', agentResponses);
 
       // Buscar el objeto de respuesta que contiene el content
       const agentResponse = agentResponses.find(response => response.content);
-      console.log('Respuesta con content encontrada:', agentResponse);
 
       if (!agentResponse) {
         throw new Error('No se encontró respuesta con contenido del agente');
@@ -156,16 +147,12 @@ export class AgentService {
       // Buscar el part que contiene el texto (puede haber múltiples parts)
       const textPart = agentResponse.content.parts.find(part => part.text);
       const agentMessageText = textPart?.text || '';
-      console.log('Texto extraído de la respuesta:', agentMessageText);
 
       const agentMessage: Message = {
         role: 'model',
         text: agentMessageText,
         timestamp: agentResponse.timestamp * 1000,
       };
-
-      this.messages.push(agentMessage);
-      console.log('Mensajes actuales en el servicio:', this.messages);
 
       return agentMessage;
     } catch (error) {
